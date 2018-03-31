@@ -28,6 +28,6 @@ public class BookController {
 
     @GetMapping("/search")
     public Page<Book> searchBooks(@RequestParam(value="q", defaultValue="") String query, Pageable pageable) {
-        return repository.findByNameOrAuthorFullnameOrPublisherNameContainsAllIgnoreCase(query, query, query, pageable);
+        return repository.findByNameContainsOrAuthorFullnameContainsOrPublisherNameContainsAllIgnoreCase(query, query, query, pageable);
     }
 }
