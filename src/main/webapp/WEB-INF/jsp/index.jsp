@@ -82,7 +82,10 @@
             <div class="alert alert-danger" role="alert" v-if="error">
                 {{ error }}
             </div>
-            <book-list :books="books" :pageNumber="pageNumber" :totalPages="totalPages" @go="go"></book-list>
+            <book-list v-if="!loading" :books="books" :pageNumber="pageNumber" :totalPages="totalPages" @go="go"></book-list>
+            <div class="alert alert-primary" role="alert" v-else>
+                Загрузка..
+            </div>
         </div>
     </script>
 
@@ -94,7 +97,10 @@
             <div class="alert alert-danger" role="alert" v-if="error">
                 {{ error }}
             </div>
-            <book-list :books="books" :pageNumber="pageNumber" :totalPages="totalPages" @go="go"></book-list>
+            <book-list v-if="!loading" :books="books" :pageNumber="pageNumber" :totalPages="totalPages" @go="go"></book-list>
+            <div class="alert alert-primary" role="alert" v-else>
+                Загрузка..
+            </div>
         </div>
     </script>
 

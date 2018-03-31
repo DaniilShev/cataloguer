@@ -52,6 +52,7 @@ var catalog = {
                 .then(function (json) {
                     self.books = json.content || [];
                     self.totalPages = json.totalPages;
+
                     self.loading = false;
                 })
                 .catch(function (reason) {
@@ -74,6 +75,7 @@ var authorBooks = {
     data: function() {
         return {
             books: [],
+            loading: true,
             pageNumber: 0,
             pageSize: 5,
             totalPages: 0,
@@ -105,8 +107,9 @@ var authorBooks = {
                 })
                 .then(function (json) {
                     self.books = json.content || [];
-
                     self.totalPages = json.totalPages;
+
+                    self.loading = false;
                 })
                 .catch(function (reason) {
                     self.error = 'Произошла ошибка: ' + reason.message;
@@ -120,6 +123,7 @@ var publisherBooks = {
     data: function() {
         return {
             books: [],
+            loading: true,
             pageNumber: 0,
             pageSize: 5,
             totalPages: 0,
@@ -152,6 +156,8 @@ var publisherBooks = {
                 .then(function (json) {
                     self.books = json.content || [];
                     self.totalPages = json.totalPages;
+
+                    self.loading = false;
                 })
                 .catch(function (reason) {
                     self.error = 'Произошла ошибка: ' + reason.message;
