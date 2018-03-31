@@ -7,14 +7,39 @@ public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    private long id;
 
     @Column
-    String fullname;
+    private String fullname;
 
     @Column
-    String birthYear;
+    private String birthYear;
 
     @Column
-    String country;
+    private String country;
+
+    public Author() {
+    }
+
+    public Author(String fullname, String birthYear, String country) {
+        this.fullname = fullname;
+        this.birthYear = birthYear;
+        this.country = country;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public String getBirthYear() {
+        return birthYear;
+    }
+
+    public String getCountry() {
+        return country;
+    }
 }

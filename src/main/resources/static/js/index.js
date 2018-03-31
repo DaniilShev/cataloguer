@@ -1,16 +1,17 @@
 Vue.component('book-list', {
+    template: '#book-list-template',
     props: {
         books: {
             type: Array,
             required: true
         },
-        pageCount: {
+        totalPages: {
             type: Number,
             default: 1
         },
-        currentPage: {
+        pageNumber: {
             type: Number,
-            default: 1
+            default: 0
         }
     },
     methods: {
@@ -20,118 +21,155 @@ Vue.component('book-list', {
     }
 });
 
-Vue.component('catalog', {
+var catalog = {
+    template: '#catalog-template',
     data: function() {
         return {
             query: '',
+            loading: true,
             books: [],
-            pageCount: 0,
+            pageNumber: 0,
+            pageSize: 5,
+            totalPages: 0,
             error: ''
         };
     },
     created: function() {
-        var self = this;
-        fetch('/books')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (json) {
-                self.books = json.books
-            })
-            .catch(function (reason) {
-                self.error = reason;
-            })
+        this.go(0);
     },
     methods: {
-        search: function() {
+        go(pageNumber) {
+            this.pageNumber = pageNumber;
+            this.error = '';
+
+            var queryPart = (this.query) ? 'search?q=' + encodeURIComponent(this.query) + '&' : '?';
+
             var self = this;
-            fetch('/books/search?q=' + this.query)
+            fetch('/books/' + queryPart +'page=' + pageNumber + '&size=' + this.pageSize + '&sort=id')
                 .then(function (response) {
                     return response.json();
                 })
-                .then(function(json) {
-                    self.books = json.books
+                .then(function (json) {
+                    self.books = json.content || [];
+                    self.totalPages = json.totalPages;
+                    self.loading = false;
                 })
                 .catch(function (reason) {
-                    self.error = reason;
+                    self.error = 'Произошла ошибка: ' + reason.message;
                 })
         }
     },
     watch: {
         query: _.debounce(
             function() {
-                this.search();
+                this.go(0);
             },
             500
         )
     }
-});
+};
 
-Vue.component('authors-books', {
-    props: {
-        authorId: {
-            type: Number,
-            required: true
-        }
-    },
+var authorBooks = {
+    template: '#author-books-template',
     data: function() {
         return {
-            author: {},
             books: [],
-            pageCount: 0,
+            pageNumber: 0,
+            pageSize: 5,
+            totalPages: 0,
             error: ''
         };
     },
-    created: function() {
-        var self = this;
-        fetch('/authors/' + this.authorId + '/books')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function(json) {
-                self.books = json.books
-            })
-            .catch(function (reason) {
-                self.error = reason;
-            })
-    }
-});
-
-Vue.component('publisher-books', {
-    props: {
-        publisherId: {
-            type: Number,
-            required: true
+    watch: {
+        '$route': function() {
+            this.go(0);
         }
     },
+    computed: {
+        author: function() {
+            return (this.books.length) ? this.books[0].author : {};
+        }
+    },
+    created: function() {
+        this.go(0);
+    },
+    methods: {
+        go: function(pageNumber) {
+            this.pageNumber = pageNumber;
+            this.error = '';
+
+            var self = this;
+            fetch('/authors/' + this.$route.params.id + '/books?page=' + pageNumber + '&size=' + this.pageSize)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (json) {
+                    self.books = json.content || [];
+
+                    self.totalPages = json.totalPages;
+                })
+                .catch(function (reason) {
+                    self.error = 'Произошла ошибка: ' + reason.message;
+                })
+        }
+    }
+};
+
+var publisherBooks = {
+    template: '#publisher-books-template',
     data: function() {
         return {
-            publisher: {},
             books: [],
-            pageCount: 0,
+            pageNumber: 0,
+            pageSize: 5,
+            totalPages: 0,
             error: ''
         };
     },
+    watch: {
+        '$route': function() {
+            this.go(0);
+        }
+    },
+    computed: {
+        publisher: function() {
+            return (this.books.length) ? this.books[0].publisher : {};
+        }
+    },
     created: function() {
-        var self = this;
-        fetch('/publishers/' + this.publisherId + '/books')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function(json) {
-                self.books = json.books
-            })
-            .catch(function (reason) {
-                self.error = reason;
-            })
-    }
-});
+        this.go(0);
+    },
+    methods: {
+        go: function(pageNumber) {
+            this.pageNumber = pageNumber;
+            this.error = '';
 
+            var self = this;
+            fetch('/publishers/' + this.$route.params.id + '/books?page=' + pageNumber + '&size=' + this.pageSize)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (json) {
+                    self.books = json.content || [];
+                    self.totalPages = json.totalPages;
+                })
+                .catch(function (reason) {
+                    self.error = 'Произошла ошибка: ' + reason.message;
+                })
+        }
+    }
+};
+
+var router = new VueRouter({
+    routes: [
+        { path: '/', component: catalog },
+        { path: '/authors/:id', component: authorBooks },
+        { path: '/publishers/:id', component: publisherBooks}
+    ]
+});
 
 
 new Vue({
     el: '#app',
-    data: {
-        window: 'catalog'
-    }
+    router: router
 });

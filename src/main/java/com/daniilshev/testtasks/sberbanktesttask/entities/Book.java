@@ -7,22 +7,65 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    private long id;
 
     @Column
-    String name;
+    private String name;
 
-    @Column
+    @JoinColumn
     @ManyToOne
-    Publisher publisher;
+    private Publisher publisher;
 
-    @Column
+    @JoinColumn
     @ManyToOne
-    Author author;
+    private Author author;
 
     @Column
-    Integer room;
+    private Integer room;
 
     @Column
-    Long shelf;
+    private Long shelf;
+
+    @Column
+    private Boolean inLibrary;
+
+    public Book() {
+    }
+
+    public Book(String name, Publisher publisher, Author author, int room, long shelf, boolean inLibrary) {
+        this.name = name;
+        this.publisher = publisher;
+        this.author = author;
+        this.room = room;
+        this.shelf = shelf;
+        this.inLibrary = inLibrary;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Publisher getPublisher() {
+        return publisher;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public Integer getRoom() {
+        return room;
+    }
+
+    public Long getShelf() {
+        return shelf;
+    }
+
+    public Boolean getInLibrary() {
+        return inLibrary;
+    }
 }

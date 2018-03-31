@@ -7,11 +7,31 @@ public class Publisher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    private long id;
 
     @Column
-    String name;
+    private String name;
 
     @Column
-    String locate;
+    private String country;
+
+    public Publisher() {
+    }
+
+    public Publisher(String name, String country) {
+        this.name = name;
+        this.country = country;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCountry() {
+        return country;
+    }
 }

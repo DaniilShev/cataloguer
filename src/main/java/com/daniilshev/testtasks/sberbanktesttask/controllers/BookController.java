@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/books")
 @RestController
+@RequestMapping("/books")
 public class BookController {
 
-    BookRepository repository;
+    private BookRepository repository;
 
     @Autowired
     public BookController(BookRepository repository) {
@@ -28,6 +28,6 @@ public class BookController {
 
     @GetMapping("/search")
     public Page<Book> searchBooks(@RequestParam(value="q", defaultValue="") String query, Pageable pageable) {
-        return repository.findByAuthorOrPublisherContains(query, pageable);
+        return repository.findByNameOrAuthorFullnameOrPublisherNameContainsAllIgnoreCase(query, query, query, pageable);
     }
 }
