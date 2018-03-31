@@ -52,11 +52,11 @@ var catalog = {
                 .then(function (json) {
                     self.books = json.content || [];
                     self.totalPages = json.totalPages;
-
                     self.loading = false;
                 })
                 .catch(function (reason) {
                     self.error = 'Произошла ошибка: ' + reason.message;
+                    self.loading = false;
                 })
         }
     },
@@ -108,11 +108,11 @@ var authorBooks = {
                 .then(function (json) {
                     self.books = json.content || [];
                     self.totalPages = json.totalPages;
-
                     self.loading = false;
                 })
                 .catch(function (reason) {
                     self.error = 'Произошла ошибка: ' + reason.message;
+                    self.loading = false;
                 })
         }
     }
@@ -156,19 +156,73 @@ var publisherBooks = {
                 .then(function (json) {
                     self.books = json.content || [];
                     self.totalPages = json.totalPages;
-
                     self.loading = false;
                 })
                 .catch(function (reason) {
                     self.error = 'Произошла ошибка: ' + reason.message;
+                    self.loading = false;
                 })
         }
+    }
+};
+
+var authors = {
+    template: '#authors-template',
+    data: function() {
+        return {
+            authors: [],
+            loading: true,
+            error: ''
+        };
+    },
+    created: function() {
+        var self = this;
+        fetch('/authors/')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (authors) {
+                self.authors = authors;
+                self.loading = false;
+            })
+            .catch(function (reason) {
+                self.error = 'Произошла ошибка: ' + reason.message;
+                self.loading = false;
+            })
+    }
+};
+
+var publishers = {
+    template: '#publishers-template',
+    data: function() {
+        return {
+            publishers: [],
+            loading: true,
+            error: ''
+        };
+    },
+    created: function() {
+        var self = this;
+        fetch('/publishers/')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (publishers) {
+                self.publishers = publishers;
+                self.loading = false;
+            })
+            .catch(function (reason) {
+                self.error = 'Произошла ошибка: ' + reason.message;
+                self.loading = false;
+            })
     }
 };
 
 var router = new VueRouter({
     routes: [
         { path: '/', component: catalog },
+        { path: '/authors/', component: authors },
+        { path: '/publishers/', component: publishers },
         { path: '/authors/:id', component: authorBooks },
         { path: '/publishers/:id', component: publisherBooks}
     ]
